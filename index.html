@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+use `http-server -p 3000` 
+<br/>
+please wait to get the info 
+<br/>
+check console for lon lat
+    
+    <img src="https://archive.org/download/img-20240317-114301/IMG_20240317_114301.jpg" id="img1" width="200" />
+    <pre>Make and model: <span id="makeAndModel"></span></pre>
+    <br/>
+    <img src="https://archive.org/download/img-20240317-114301/IMG_20240317_114301.jpg" id="img2" width="200" />
+    
+    <pre id="allMetaDataSpan"></pre>
+    <br/>
+
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <script>
+window.onload=getExif;
+function getExif() {
+    var img1 = document.getElementById("img1");
+    EXIF.getData(img1, function() {
+        var make = EXIF.getTag(this, "Make");
+        var model = EXIF.getTag(this, "Model");
+        var makeAndModel = document.getElementById("makeAndModel");
+        makeAndModel.innerHTML = `${make} ${model}`;
+    });
+
+    var img2 = document.getElementById("img2");
+    EXIF.getData(img2, function() {
+        var allMetaData = EXIF.getAllTags(this);
+        var allMetaDataSpan = document.getElementById("allMetaDataSpan");
+        allMetaDataSpan.innerHTML = JSON.stringify(allMetaData, null, "\t");
+     
+        console.log("lon: ", calc(allMetaData.GPSLongitude) );
+        console.log("lat: ", calc(allMetaData.GPSLatitude));
+    
+    });
+}
+
+
+
+function calc(lon){
+    let long = lon[0] + lon[1]/60 + lon[2]/3600
+    if (long.toString().length > 10) {
+        return parseFloat(long.toString().slice(0,10))
+    } 
+    return long
+}
+
+    </script>
+</body>
+</html>
